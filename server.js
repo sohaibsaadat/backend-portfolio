@@ -6,7 +6,7 @@ import cors from "cors"
 dotenv.config();
 const app = express();
 app.use(cors({
-    origin: "http://localhost:3000",
+    origin: "https://sohaibali.vercel.app",
     credentials: true
 }))
 app.use(express.json());
