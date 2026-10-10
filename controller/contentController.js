@@ -2,9 +2,24 @@ import cloudinary from "../config/cloudinary.js";
 import Contact from "../schemas/contactSchema.js";
 import Resume from "../schemas/resumeSchema.js";
 import Skill from "../schemas/skillSchema.js";
+import streamifier from "streamifier";
 
-const uploadFile = async (file, options) => cloudinary.uploader.upload(file.path, options);
 
+const uploadFile = (file, options) => {
+    return new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+            options,
+            (error, result) => {
+                if (error) return reject(error);
+                resolve(result);
+            }
+        );
+
+        streamifier
+            .createReadStream(file.buffer)
+            .pipe(stream);
+    });
+};
 export const getSkills = async (req, res) => {
     try {
         const skills = await Skill.find().sort({ createdAt: -1 });
